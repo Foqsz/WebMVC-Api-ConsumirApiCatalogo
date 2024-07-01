@@ -13,6 +13,7 @@ namespace CategoriasMvc.Controllers
             _categoriaService = categoriaService;
         }
 
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<CategoriaViewModel>>> Index()
         {
             var result = await _categoriaService.GetCategorias();
@@ -23,6 +24,28 @@ namespace CategoriasMvc.Controllers
             }
 
             return View(result);
+        }
+
+        [HttpGet]
+        public IActionResult CriarNovaCategoria()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<CategoriaViewModel>> CriarNovaCategoria(CategoriaViewModel categoriaVM)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _categoriaService.CriaCategoria(categoriaVM);
+
+                if (result != null)
+                {
+                    return RedirectToAction(nameof(Index));
+                } 
+            }
+            ViewBag.Erro = "Erro ao criar uma categoria";
+            return View(categoriaVM);
         }
     }
 }
