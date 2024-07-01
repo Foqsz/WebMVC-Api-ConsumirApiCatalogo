@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using System.Text.Json;
 using WebApplication1.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,8 @@ builder.Services.AddHttpClient("CategoriasApi", c =>
 {
     c.BaseAddress = new Uri(builder.Configuration["ServiceUri:CategoriasApi"]); //endereço base
 });
+
+builder.Services.AddSingleton(new JsonSerializerOptions());
 
 builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 

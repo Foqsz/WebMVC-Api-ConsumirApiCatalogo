@@ -60,7 +60,7 @@ namespace WebApplication1.Services
             var client = _clientFactory.CreateClient("CategoriasApi");
             var categoria = JsonSerializer.Serialize(categoriaVM);
             StringContent content = new StringContent(categoria, Encoding.UTF8, "application/json");
-            using (var response = await client.GetAsync(apiEndpoint + id))
+            using (var response = await client.PostAsync(apiEndpoint, content))
             {
                 if (response.IsSuccessStatusCode)
                 {
