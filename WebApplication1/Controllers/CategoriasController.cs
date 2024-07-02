@@ -76,5 +76,26 @@ namespace CategoriasMvc.Controllers
             return View(categoriaVM);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> DeletarCategoria(int id)
+        {
+            var result = await _categoriaService.GetCategoriaPorId(id);   
+            if (result is null)
+            {
+                return View("Error");
+            }
+            return View(result);
+        }
+
+        [HttpPost(), ActionName("DeletarCategoria")]
+        public async Task<IActionResult> DeletarConfirmado(int id)
+        {
+            var result = await _categoriaService.DeletaCategoria(id);
+            if (result)
+            {
+                return RedirectToAction("Index");
+            }
+            return View("Error");
+        }
     }
 }
