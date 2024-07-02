@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using System.Net.Http.Headers;
 using System.Text.Json;
 using WebApplication1.Services;
 
@@ -10,6 +11,13 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient("CategoriasApi", c =>
 {
     c.BaseAddress = new Uri(builder.Configuration["ServiceUri:CategoriasApi"]); //endereço base
+});
+
+builder.Services.AddHttpClient("AutenticaApi", c =>
+{
+    c.BaseAddress = new Uri(builder.Configuration["ServiceUri:AutenticaApi"]); //endereço base
+    c.DefaultRequestHeaders.Accept.Clear();
+    c.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 });
 
 builder.Services.AddSingleton(new JsonSerializerOptions());
