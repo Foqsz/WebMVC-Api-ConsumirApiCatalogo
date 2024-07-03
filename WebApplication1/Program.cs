@@ -1,3 +1,4 @@
+using CategoriasMvc.Services;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Headers;
 using System.Text.Json;
@@ -23,6 +24,7 @@ builder.Services.AddHttpClient("AutenticaApi", c =>
 builder.Services.AddSingleton(new JsonSerializerOptions());
 
 builder.Services.AddScoped<ICategoriaService, CategoriaService>();
+builder.Services.AddScoped<IAutenticacao, Autenticacao>();
 
 var app = builder.Build();
 
