@@ -1,7 +1,8 @@
-﻿using CategoriasMvc.Services;
+﻿using CategoriasMvc.Models;
+using CategoriasMvc.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CategoriasMvc.Models
+namespace CategoriasMvc.Controllers
 {
     public class AccountController : Controller
     {
@@ -19,7 +20,7 @@ namespace CategoriasMvc.Models
         }
 
         [HttpPost]
-        public async Task <ActionResult> Login(UsuarioViewModel model)
+        public async Task<ActionResult> Login(UsuarioViewModel model)
         {
             //verifica se o usuario é válido
             if (!ModelState.IsValid)
