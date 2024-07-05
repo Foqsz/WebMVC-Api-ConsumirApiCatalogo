@@ -29,6 +29,7 @@ builder.Services.AddHttpClient("ProdutosApi", c =>
 builder.Services.AddSingleton(new JsonSerializerOptions());
 
 builder.Services.AddScoped<ICategoriaService, CategoriaService>();
+builder.Services.AddScoped<IProdutoService, ProdutoService>();
 builder.Services.AddScoped<IAutenticacao, Autenticacao>();
 
 var app = builder.Build();
