@@ -1,6 +1,8 @@
 ﻿using CategoriasMvc.Models;
 using CategoriasMvc.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using WebApplication1.Models;
 using WebApplication1.Services;
 
 namespace CategoriasMvc.Controllers
@@ -31,6 +33,51 @@ namespace CategoriasMvc.Controllers
 
             return View(result);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> CriaNovoProduto()
+        {
+            ViewBag.CategoriaId = new SelectList(await _categoriaService.GetCategorias(), "CategoriaId", "Nome");
+
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<ProdutoViewModel>> CriarNovoProduto(ProdutoViewModel produtoVM)
+        {
+            try
+            {
+                Console.WriteLine("Iniciando método CriarNovoProduto...");
+
+                if (ModelState.IsValid)
+                {
+                    var result = await _produtoService.CriaProduto(produtoVM, ObtemTokenJwt());
+
+                    if (result != null)
+                    {
+                        Console.WriteLine("Produto criado com sucesso. Redirecionando para Index...");
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else
+                    {
+                        Console.WriteLine("Falha ao criar produto. Resultado nulo.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("ModelState inválido. Não foi possível criar o produto.");
+                    ViewBag.CategoriaId = new SelectList(await _categoriaService.GetCategorias(), "CategoriaId", "Nome");
+                }
+
+                return View(produtoVM);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ocorreu uma exceção: {ex.Message}");
+                throw; // Re-throw para manter o fluxo de exceção
+            }
+        }
+
 
         private string ObtemTokenJwt()
         {
