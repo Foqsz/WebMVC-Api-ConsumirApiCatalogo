@@ -35,7 +35,7 @@ namespace CategoriasMvc.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> CriaNovoProduto()
+        public async Task<IActionResult> CriarNovoProduto()
         {
             ViewBag.CategoriaId = new SelectList(await _categoriaService.GetCategorias(), "CategoriaId", "Nome");
 
@@ -74,7 +74,38 @@ namespace CategoriasMvc.Controllers
             }
 
             return View(produtoDetalhes);
-        } 
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AtualizarProduto(int id)
+        {
+            var result = await _produtoService.GetProdutoPorId(id, ObtemTokenJwt());
+
+            if (result is null)
+            {
+                return View("Error");
+            }
+
+            ViewBag.CategoriaId =
+                new SelectList(await _categoriaService.GetCategorias(), "CategoriaId", "Nome");
+
+            return View(result);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<ProdutoViewModel>> AtualizarProduto(int id, ProdutoViewModel produtoVM)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _produtoService.AtualizarProduto(id, produtoVM, ObtemTokenJwt());
+
+                if (result)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            return View(produtoVM);
+        }
 
         private string ObtemTokenJwt()
         {
