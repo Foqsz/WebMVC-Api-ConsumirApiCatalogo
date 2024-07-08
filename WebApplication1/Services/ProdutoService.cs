@@ -46,20 +46,36 @@ namespace CategoriasMvc.Services
             var client = _clientFactory.CreateClient("ProdutosApi");
             PutTokenInHeaderAuthorization(token, client);
 
-            using (var response = await client.GetAsync(apiEndpoint + id))
+            try
             {
-                if (response.IsSuccessStatusCode)
+                using (var response = await client.GetAsync(apiEndpoint + id))
                 {
-                    var apiResponse = await response.Content.ReadAsStreamAsync();
-                    produtoVM = await JsonSerializer.DeserializeAsync<ProdutoViewModel>(apiResponse, _options);
-                }
-                else
-                {
-                    return null;
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var apiResponse = await response.Content.ReadAsStreamAsync();
+                        var produtoVM = await JsonSerializer.DeserializeAsync<ProdutoViewModel>(apiResponse, _options);
+
+                        if (produtoVM == null)
+                        {
+                            Console.WriteLine($"Falha ao desserializar o produto com ID {id}.");
+                        }
+
+                        return produtoVM;
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Falha ao obter o produto com ID {id}. StatusCode: {response.StatusCode}");
+                        return null;
+                    }
                 }
             }
-            return produtoVM;
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ocorreu um erro ao obter o produto com ID {id}: {ex.Message}");
+                return null;
+            }
         }
+
 
         public async Task<ProdutoViewModel> CriaProduto(ProdutoViewModel produtoVM, string token)
         {

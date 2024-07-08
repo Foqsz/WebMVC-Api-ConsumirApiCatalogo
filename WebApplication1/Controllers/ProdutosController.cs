@@ -45,39 +45,36 @@ namespace CategoriasMvc.Controllers
         [HttpPost]
         public async Task<ActionResult<ProdutoViewModel>> CriarNovoProduto(ProdutoViewModel produtoVM)
         {
-            try
+            if (ModelState.IsValid)
             {
-                Console.WriteLine("Iniciando método CriarNovoProduto...");
+                var result = await _produtoService.CriaProduto(produtoVM, ObtemTokenJwt());
 
-                if (ModelState.IsValid)
+                if (result != null)
                 {
-                    var result = await _produtoService.CriaProduto(produtoVM, ObtemTokenJwt());
-
-                    if (result != null)
-                    {
-                        Console.WriteLine("Produto criado com sucesso. Redirecionando para Index...");
-                        return RedirectToAction(nameof(Index));
-                    }
-                    else
-                    {
-                        Console.WriteLine("Falha ao criar produto. Resultado nulo.");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("ModelState inválido. Não foi possível criar o produto.");
-                    ViewBag.CategoriaId = new SelectList(await _categoriaService.GetCategorias(), "CategoriaId", "Nome");
+                    return RedirectToAction(nameof(Index));
                 }
 
-                return View(produtoVM);
             }
-            catch (Exception ex)
+            else
             {
-                Console.WriteLine($"Ocorreu uma exceção: {ex.Message}");
-                throw; // Re-throw para manter o fluxo de exceção
+                ViewBag.CategoriaId =
+                new SelectList(await _categoriaService.GetCategorias(), "CategoriaId", "Nome");
             }
+            return View(produtoVM);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> DetalhesProduto(int id)
+        {
+            var produtoDetalhes = await _produtoService.GetProdutoPorId(id, ObtemTokenJwt());
+
+            if (produtoDetalhes is null)
+            {
+                return View("Error");
+            }
+
+            return View(produtoDetalhes);
+        } 
 
         private string ObtemTokenJwt()
         {
